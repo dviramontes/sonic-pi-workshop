@@ -203,3 +203,70 @@ end
 
 
 
+##### workspace # 3
+###################
+
+define :melody do |time=0.25, oct=4|
+  synth :fm, amp:0.5
+  ns = (scale :e2, :bartok, num_octaves: oct)
+  play ns.choose
+  sleep time
+end
+
+define :beat do |x|
+  sleep 0.24
+  sample :loop_garzul, rate: 1, start: 0.0, finish: 0.36
+  if x > 0.5 then sleep 0.25 else sleep 2 end
+end
+
+
+42.times do # intro
+  with_bpm 48 do
+    melody
+  end
+end 
+
+beat 0.6
+
+3.times do
+  melody
+  with_fx :slicer do
+    beat rand
+  end
+end
+
+32.times do |i|
+  with_fx :echo do
+    with_fx :reverb do
+      melody 0.15
+    end
+  end
+  if i > 25 then
+    in_thread do
+      beat rand
+    end
+  end
+end
+
+live_loop :play1 do
+  in_thread do
+    beat rand
+    sleep 0.5
+  end
+  sleep 0.5
+end
+
+live_loop :play2 do |i|
+  with_bpm 180 do
+    with_fx :distortion do
+      3.times do melody end
+    end
+  end
+end
+
+
+
+
+
+
+
